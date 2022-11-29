@@ -103,6 +103,8 @@ public class Questions {
         System.out.println(test2);
         System.out.println(inputQuestionArray.size());
         System.out.println(questionNames);
+        test2 = questionNames.get(1);
+        System.out.println(test2);
     }
     public static void main( String[] args ) throws IOException, ParseException {
         Questions test = new Questions();
