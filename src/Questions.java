@@ -1,9 +1,7 @@
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -82,7 +80,7 @@ public class Questions {
     }
     public void readQuestion() throws IOException, ParseException {
         int test;
-        String[] questionNames = new String[1];
+        List<String> questionNames = new ArrayList<String>();
         String test2;
         JSONParser parser = new JSONParser();
         FileReader reader = new FileReader("test2.json");
@@ -95,11 +93,8 @@ public class Questions {
         inputQuestionList = (JSONObject)  inputQuestionsOBJ.get("Question List:");
         test = inputQuestionList.size();
         System.out.println(test);
-        questionNames[0] = (String) inputQuestionList.get(String.valueOf(1));
-        for(int i = 1; i < inputQuestionList.size(); i++){
-            questionNames = Arrays.copyOf(questionNames, questionNames.length + 1);
-            test2 = (String) inputQuestionList.get(String.valueOf(i+1));
-            questionNames[i] = test2;
+        for(int i = 0; i < inputQuestionList.size(); i++){
+            questionNames.add((String) inputQuestionList.get(String.valueOf(i+1)));
 
         }
         inputQuestionArray = (JSONObject) inputQuestionsOBJ.get("test");
@@ -107,9 +102,7 @@ public class Questions {
         test2 = (String) inputQuestionArray.get("A1:");
         System.out.println(test2);
         System.out.println(inputQuestionArray.size());
-        for(int i = 0; i < questionNames.length; i++) {
-            System.out.println(questionNames[i]);
-        }
+        System.out.println(questionNames);
     }
     public static void main( String[] args ) throws IOException, ParseException {
         Questions test = new Questions();
