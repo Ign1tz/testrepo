@@ -16,27 +16,31 @@ public class readWriteQuestions {
     public String A4;
     public String DIFFICULTY;
     public String RIGHTAWNSER;
-    private int QUESTIONCOUNT;
 
-    public List<readWriteQuestions> questionList = readQuestion("test3.json");
+    public List<readWriteQuestions> questionList(String filePath) throws IOException {
+        List<readWriteQuestions> temp = readQuestion(filePath);
+        return temp;
+    }
+
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public readWriteQuestions(String QUESTION, String A1, String A2, String A3, String A4, String DIFFICULTY, String RIGHTAWNSER, int QUESTIONCOUNT) throws IOException {
-        this.QUESTION = QUESTION;
-        this.A1 = A1;
-        this.A2 = A2;
-        this.A3 = A3;
-        this.A4 = A4;
-        this.DIFFICULTY = DIFFICULTY;
-        this.RIGHTAWNSER = RIGHTAWNSER;
-        this.QUESTIONCOUNT = QUESTIONCOUNT;
+
+    public readWriteQuestions(String eQuestion, String eA1, String eA2, String eA3, String eA4, String eDifficulty, String eAnswer) throws IOException {
+        this.QUESTION = eQuestion;
+        this.A1 = eA1;
+        this.A2 = eA2;
+        this.A3 = eA3;
+        this.A4 = eA4;
+        this.DIFFICULTY = eDifficulty;
+        this.RIGHTAWNSER = eAnswer;
     }
-    public readWriteQuestions(int QUESTIONCOUNT) throws IOException {
-        this.QUESTIONCOUNT = QUESTIONCOUNT;
+    public readWriteQuestions() throws IOException {
+
     }
 
     public void writeQuestions(String filePath) throws IOException {
         List<readWriteQuestions> tempList = new ArrayList<>();
+        tempList = questionList(filePath);
         Writer writer = Files.newBufferedWriter(Paths.get(filePath));
         Scanner scan = new Scanner(System.in);
         int count = 1, difficulty = 0;
@@ -44,18 +48,18 @@ public class readWriteQuestions {
         String dificultyS = "";
         while (!stop) {
             String unnessary = scan.nextLine();
-            System.out.print("A4: ");
-            String a1 = scan.nextLine();
-            System.out.print("A3: ");
-            String a2 = scan.nextLine();
-            System.out.print("A2: ");
-            String a3 = scan.nextLine();
+            System.out.print("Question: ");
+            String question = scan.nextLine();
             System.out.print("A1: ");
+            String a1 = scan.nextLine();
+            System.out.print("A2: ");
+            String a2 = scan.nextLine();
+            System.out.print("A3: ");
+            String a3 = scan.nextLine();
+            System.out.print("A4: ");
             String a4 = scan.nextLine();
             System.out.print("Correct answer: ");
             String answer = scan.nextLine();
-            System.out.print("Question: ");
-            String question = scan.nextLine();
             while (!isInside) {
                 System.out.print("Difficulty Level [1-3]: ");
                 difficulty = scan.nextInt();
@@ -75,7 +79,21 @@ public class readWriteQuestions {
                     dificultyS = "Hard";
                     break;
             }
-            newQuestion = new readWriteQuestions(question, a1, a2, a3, a4, dificultyS, answer, count);
+            byte[] eQuestion = Base64.getEncoder().encode(question.getBytes());
+            question = new String(eQuestion);
+            byte[] eA1 = Base64.getEncoder().encode(a1.getBytes());
+            a1 = new String(eA1);
+            byte[] eA2 = Base64.getEncoder().encode(a2.getBytes());
+            a2 = new String(eA2);
+            byte[] eA3 = Base64.getEncoder().encode(a3.getBytes());
+            a3 = new String(eA3);
+            byte[] eA4 = Base64.getEncoder().encode(a4.getBytes());
+            a4 = new String(eA4);
+            byte[] eDifficulty = Base64.getEncoder().encode(dificultyS.getBytes());
+            dificultyS = new String(eDifficulty);
+            byte[] eAnswer = Base64.getEncoder().encode(answer.getBytes());
+            answer = new String(eAnswer);
+            newQuestion = new readWriteQuestions(question, a1, a2, a3, a4, dificultyS, answer);
             tempList.add(newQuestion);
             System.out.print("Another Question? ");
             String choice = scan.next();
@@ -89,19 +107,17 @@ public class readWriteQuestions {
     }
 
     public List<readWriteQuestions> readQuestion(String filePath) throws IOException {
-        readWriteQuestions question;
         Reader reader = Files.newBufferedReader(Paths.get(filePath));
         List<readWriteQuestions> tempList = new Gson().fromJson(reader, new TypeToken<List<readWriteQuestions>>() {}.getType());
         reader.close();
-        question = tempList.get(1);
         return tempList;
     }
 
     public static void main(String[] args) throws IOException {
-        readWriteQuestions test = new readWriteQuestions(0);
-        //test.writeQuestions("test3.json");
-        test.readQuestion("test3.json");
-        System.out.println(test.questionList);
+        readWriteQuestions test = new readWriteQuestions();
+        test.writeQuestions("test3.json");
+        //test.readQuestion("test3.json");
+        //System.out.println(test.questionList);
     }
 }
 

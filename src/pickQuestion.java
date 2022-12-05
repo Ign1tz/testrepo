@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -7,8 +8,8 @@ public class pickQuestion {
     private List<Integer> easy = new ArrayList<>();
     private List<Integer> medium = new ArrayList<>();
     private List<Integer> hard = new ArrayList<>();
-    private readWriteQuestions test = new readWriteQuestions(0);
-    private List<readWriteQuestions> questionList = test.questionList;
+    private readWriteQuestions test = new readWriteQuestions();
+    private List<readWriteQuestions> questionList = test.questionList("test3.json");
 
     public pickQuestion() throws IOException {
     }
@@ -18,7 +19,8 @@ public class pickQuestion {
         String difficulty;
         for(int place = 0; place < questionList.size(); place++){
             question = questionList.get(place);
-            difficulty = question.DIFFICULTY;
+            byte[] eDifficulty = Base64.getDecoder().decode(question.DIFFICULTY);
+            difficulty = new String(eDifficulty);
             switch (difficulty){
                 case "Easy":
                     easy.add(place);
@@ -204,13 +206,20 @@ public class pickQuestion {
         String question, difficulty, rightAnswer, a1, a2, a3, a4;
         for(int i = 0; i < questionList.size(); i++){
             activeQuestion = activeQuestion(probList, difficultyOfLastQuestion, questionList.size(), i);
-            question = activeQuestion.QUESTION;
-            difficulty = activeQuestion.DIFFICULTY;
-            rightAnswer = activeQuestion.RIGHTAWNSER;
-            a1 = activeQuestion.A1;
-            a2 = activeQuestion.A2;
-            a3 = activeQuestion.A3;
-            a4 = activeQuestion.A4;
+            byte[] eQuestion = Base64.getDecoder().decode(activeQuestion.QUESTION);
+            question = new String(eQuestion);
+            byte[] eDifficulty = Base64.getDecoder().decode(activeQuestion.DIFFICULTY);
+            difficulty = new String(eDifficulty);
+            byte[] eRightAnswer = Base64.getDecoder().decode(activeQuestion.RIGHTAWNSER);
+            rightAnswer = new String(eRightAnswer);
+            byte[] eA1 = Base64.getDecoder().decode(activeQuestion.A1);
+            a1 = new String(eA1);
+            byte[] eA2 = Base64.getDecoder().decode(activeQuestion.A2);
+            a2 = new String(eA2);
+            byte[] eA3 = Base64.getDecoder().decode(activeQuestion.A3);
+            a3 = new String(eA3);
+            byte[] eA4 = Base64.getDecoder().decode(activeQuestion.A4);
+            a4 = new String(eA4);
             switch (difficulty){
                 case "Easy":
                     difficultyOfLastQuestion = 1;
@@ -238,5 +247,10 @@ public class pickQuestion {
     public static void main(String[] args) throws IOException {
         pickQuestion temp = new pickQuestion();
         temp.printQuestion();
+        /*String test = "test";
+        byte[] encodedBytes = Base64.getEncoder().encode(test.getBytes());
+        System.out.println(new String(encodedBytes));
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedBytes);
+        System.out.println(new String(decodedBytes));*/
     }
 }
