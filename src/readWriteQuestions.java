@@ -9,17 +9,19 @@ import java.util.*;
 
 public class readWriteQuestions {
     private static readWriteQuestions newQuestion;
-    private String QUESTION;
-    private String A1;
-    private String A2;
-    private String A3;
-    private String A4;
-    private String DIFFICULTY;
-    private String RIGHTAWNSER;
+    public String QUESTION;
+    public String A1;
+    public String A2;
+    public String A3;
+    public String A4;
+    public String DIFFICULTY;
+    public String RIGHTAWNSER;
     private int QUESTIONCOUNT;
+
+    public List<readWriteQuestions> questionList = readQuestion("test3.json");
     static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public readWriteQuestions(String QUESTION, String A1, String A2, String A3, String A4, String DIFFICULTY, String RIGHTAWNSER, int QUESTIONCOUNT) {
+    public readWriteQuestions(String QUESTION, String A1, String A2, String A3, String A4, String DIFFICULTY, String RIGHTAWNSER, int QUESTIONCOUNT) throws IOException {
         this.QUESTION = QUESTION;
         this.A1 = A1;
         this.A2 = A2;
@@ -29,12 +31,11 @@ public class readWriteQuestions {
         this.RIGHTAWNSER = RIGHTAWNSER;
         this.QUESTIONCOUNT = QUESTIONCOUNT;
     }
-    public readWriteQuestions(int QUESTIONCOUNT){
+    public readWriteQuestions(int QUESTIONCOUNT) throws IOException {
         this.QUESTIONCOUNT = QUESTIONCOUNT;
     }
 
     public void writeQuestions(String filePath) throws IOException {
-        readWriteQuestions[] questionList = new readWriteQuestions[(int) Math.pow(2,3)];
         List<readWriteQuestions> tempList = new ArrayList<>();
         Writer writer = Files.newBufferedWriter(Paths.get(filePath));
         Scanner scan = new Scanner(System.in);
@@ -87,20 +88,20 @@ public class readWriteQuestions {
         writer.close();
     }
 
-    public void readQuestion(String filePath) throws IOException {
+    public List<readWriteQuestions> readQuestion(String filePath) throws IOException {
         readWriteQuestions question;
         Reader reader = Files.newBufferedReader(Paths.get(filePath));
         List<readWriteQuestions> tempList = new Gson().fromJson(reader, new TypeToken<List<readWriteQuestions>>() {}.getType());
         reader.close();
         question = tempList.get(1);
-        System.out.println(question.QUESTION);
-        tempList.forEach(System.out::println);
+        return tempList;
     }
 
     public static void main(String[] args) throws IOException {
         readWriteQuestions test = new readWriteQuestions(0);
         //test.writeQuestions("test3.json");
         test.readQuestion("test3.json");
+        System.out.println(test.questionList);
     }
 }
 

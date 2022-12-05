@@ -1,0 +1,646 @@
+Index: src/Questions.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\nimport java.io.*;\r\nimport java.util.*;\r\n\r\nimport org.json.simple.JSONArray;\r\nimport org.json.simple.JSONObject;\r\nimport org.json.simple.parser.JSONParser;\r\nimport org.json.simple.parser.ParseException;\r\n\r\npublic class Questions {\r\n    private List<Integer> easyQuestion = new ArrayList<>();\r\n    private List<Integer> mediumQuestion = new ArrayList<>();\r\n    private List<Integer> hardQuestion = new ArrayList<>();\r\n    public JSONObject questions = new JSONObject();\r\n    public List<JSONObject> List = new ArrayList<>();\r\n    public JSONObject questionList = new JSONObject();\r\n    public JSONObject inputQuestionList = new JSONObject();\r\n    public JSONObject inputQuestionsOBJ = new JSONObject();\r\n    public JSONObject inputQuestionArray = new JSONObject();\r\n    public JSONArray[] inputList = new JSONArray[(int) Math.pow(2,10)];\r\n\r\n    public void newQuestion() throws IOException {\r\n        FileWriter file = new FileWriter(\"test2.json\");\r\n        Scanner scan = new Scanner(System.in);\r\n        JSONObject testOBJ = new JSONObject();\r\n        int count = 1, difficulty = 0;\r\n        boolean stop = false, isInside = false;\r\n        String dificultyS = \"\";\r\n        while(!stop){\r\n            String unnessary = scan.nextLine();\r\n            System.out.print(\"A4: \");\r\n            String a1 = scan.nextLine();\r\n            System.out.print(\"A3: \");\r\n            String a2 = scan.nextLine();\r\n            System.out.print(\"A2: \");\r\n            String a3 = scan.nextLine();\r\n            System.out.print(\"A1: \");\r\n            String a4 = scan.nextLine();\r\n            System.out.print(\"Correct answer: \");\r\n            String answer = scan.nextLine();\r\n            System.out.print(\"Question: \");\r\n            String question = scan.nextLine();\r\n            while(!isInside) {\r\n                System.out.print(\"Difficulty Level [1-3]: \");\r\n                difficulty = scan.nextInt();\r\n                if (difficulty < 4 && difficulty > 0){\r\n                    isInside = true;\r\n                }\r\n            }\r\n            isInside = false;\r\n            switch (difficulty){\r\n                case 1:\r\n                    dificultyS = \"Easy\";\r\n                    break;\r\n                case 2:\r\n                    dificultyS = \"Medium\";\r\n                    break;\r\n                case 3:\r\n                    dificultyS = \"Hard\";\r\n                    break;\r\n            }\r\n            questions.put(\"A1:\", a1);\r\n            questions.put(\"A2:\", a2);\r\n            questions.put(\"A3:\", a3);\r\n            questions.put(\"A4:\", a4);\r\n            questions.put(\"Correct answer: \", answer);\r\n            questions.put(\"Difficulty:\", dificultyS);\r\n            testOBJ.put(question, questions);\r\n            questionList.put(count, question);\r\n            List.add(testOBJ);\r\n            System.out.print(\"Another Question? \");\r\n            String choice = scan.next();\r\n\r\n            count++;\r\n            if(Objects.equals(choice, \"n\")){\r\n                stop = true;\r\n            }\r\n        }\r\n        testOBJ.put(\"Question List:\", questionList);\r\n        List.add(testOBJ);\r\n        for(int i = 0; i < List.size(); i++) {\r\n            file.write(List.get(i).toJSONString());\r\n            file.flush();\r\n        }\r\n    }\r\n    public void readQuestion() throws IOException, ParseException {\r\n        JSONObject tempOBJ;\r\n        String temp;\r\n        JSONParser parser = new JSONParser();\r\n        FileReader reader = new FileReader(\"test2.json\");\r\n        Object obj = parser.parse(reader);\r\n        inputQuestionsOBJ = (JSONObject) obj;\r\n        inputQuestionList = (JSONObject) inputQuestionsOBJ.get(\"Question List:\");\r\n\r\n        for(int count = 1; count <= inputQuestionList.size(); count++){\r\n            tempOBJ = (JSONObject) inputQuestionsOBJ.get(inputQuestionList.get(String.valueOf(count)));\r\n            temp = (String) tempOBJ.get(\"Difficulty:\");\r\n            switch (temp){\r\n                case \"Easy\":\r\n                    easyQuestion.add(count);\r\n                    break;\r\n                case \"Medium\":\r\n                    mediumQuestion.add(count);\r\n                    break;\r\n                case \"Hard\":\r\n                    hardQuestion.add(count);\r\n                    break;\r\n            }\r\n        }\r\n    }\r\n    public String pickQuestion(int currentQuestion, final int numberOfQuestions, int lastQuestionPicked, float probEasy, float probMedium, float probHard){\r\n        int random, questionPicked;\r\n        String temp;\r\n        random = randomNumber(1, 100);\r\n        if(currentQuestion <= numberOfQuestions / 2){\r\n            switch (lastQuestionPicked){\r\n                case 0:\r\n                    break;\r\n                case 1:\r\n                    if(probEasy >= 6){\r\n                    probEasy = (probEasy - 5);\r\n                    probMedium = (probMedium + 3);\r\n                    probHard = (probHard + 2);\r\n                    }\r\n                    break;\r\n                case 2:\r\n                    if(probMedium >= 4) {\r\n                        probEasy = (probEasy + 3);\r\n                        probMedium = (probMedium - 3);\r\n                    }\r\n                    break;\r\n                case 3:\r\n                    if(probHard >= 4) {\r\n                        probEasy = (probEasy + 3);\r\n                        probHard = (probHard - 3);\r\n                    }\r\n                    break;\r\n            }\r\n            if(random <= probEasy){\r\n                return easyQuestionLeft();\r\n            } else if (random <= probMedium + probEasy){\r\n                return mediumQuestionLeft();\r\n            }else {\r\n                return hardQuestionLeft();\r\n            }\r\n        }else if (currentQuestion <= numberOfQuestions - (Math.ceil(numberOfQuestions / 5))){\r\n            probEasy = 12;\r\n            probMedium = 66;\r\n            probHard = 22;\r\n            switch (lastQuestionPicked){\r\n                case 1:\r\n                    if(probEasy >= 6){\r\n                        probEasy = (probEasy - 5);\r\n                        probMedium = (probMedium + 2);\r\n                        probHard = (probHard + 3);\r\n                    }\r\n                    break;\r\n                case 2:\r\n                    if(probMedium >= 4) {\r\n                        probHard = (probHard + 3);\r\n                        probMedium = (probMedium - 3);\r\n                    }\r\n                    break;\r\n                case 3:\r\n                    if(probHard >= 4) {\r\n                        probMedium = (probMedium + 3);\r\n                        probHard = (probHard - 3);\r\n                    }\r\n                    break;\r\n            }\r\n            if(random <= probMedium){\r\n                return mediumQuestionLeft();\r\n            } else if (random <= probMedium + probHard){\r\n                return hardQuestionLeft();\r\n            }else {\r\n                return easyQuestionLeft();\r\n            }\r\n        }\r\n        else if (currentQuestion == numberOfQuestions) {\r\n            questionPicked = randomNumber(0, hardQuestion.size());\r\n            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));\r\n            hardQuestion.remove(questionPicked);\r\n            return temp;\r\n        }\r\n        else{\r\n            hardQuestionLeft();\r\n        }\r\n        return null;\r\n    }\r\n    public String easyQuestionLeft(){\r\n        int questionPicked;\r\n        String temp;\r\n        if(easyQuestion.size() > 0){\r\n            questionPicked = randomNumber(0, easyQuestion.size());\r\n            temp = (String) inputQuestionList.get(String.valueOf(easyQuestion.get(questionPicked)));\r\n            easyQuestion.remove(questionPicked);\r\n            return temp;\r\n        } else if (randomNumber(1,100) > 66) {\r\n            if(mediumQuestion.size() > 0) {\r\n                questionPicked = randomNumber(0, mediumQuestion.size());\r\n                temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));\r\n                mediumQuestion.remove(questionPicked);\r\n                return temp;\r\n            } else{\r\n                questionPicked = randomNumber(0, hardQuestion.size());\r\n                temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));\r\n                hardQuestion.remove(hardQuestion.get(questionPicked));\r\n                return temp;\r\n            }\r\n        }else{\r\n            questionPicked = randomNumber(0, hardQuestion.size());\r\n            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));\r\n            hardQuestion.remove(questionPicked);\r\n            return temp;\r\n        }\r\n    }\r\n    public String mediumQuestionLeft(){\r\n        int questionPicked;\r\n        String temp;\r\n        if(mediumQuestion.size() > 0){\r\n            questionPicked = randomNumber(0, mediumQuestion.size());\r\n            temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));\r\n            mediumQuestion.remove(questionPicked);\r\n            return temp;\r\n        } else if (randomNumber(1,100) > 66) {\r\n            if(easyQuestion.size() > 0) {\r\n                questionPicked = randomNumber(0, easyQuestion.size());\r\n                temp = (String) inputQuestionList.get(String.valueOf(easyQuestion.get(questionPicked)));\r\n                easyQuestion.remove(questionPicked);\r\n                return temp;\r\n            } else{\r\n                questionPicked = randomNumber(0, hardQuestion.size());\r\n                temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));\r\n                hardQuestion.remove(questionPicked);\r\n                return temp;\r\n            }\r\n        }else{\r\n            questionPicked = randomNumber(0, hardQuestion.size());\r\n            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));\r\n            hardQuestion.remove(questionPicked);\r\n            return temp;\r\n        }\r\n    }\r\n    public String hardQuestionLeft(){\r\n        int questionPicked;\r\n        String temp;\r\n        if(hardQuestion.size() > 1){\r\n            questionPicked = randomNumber(0, hardQuestion.size());\r\n            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));\r\n            hardQuestion.remove(questionPicked);\r\n            return temp;\r\n        } else if (mediumQuestion.size() > 0) {\r\n            questionPicked = randomNumber(0, mediumQuestion.size());\r\n            temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));\r\n            mediumQuestion.remove(questionPicked);\r\n            return temp;\r\n        }else{\r\n            questionPicked = randomNumber(0, easyQuestion.size());\r\n            temp = (String) inputQuestionList.get(String.valueOf(easyQuestion.get(questionPicked)));\r\n            easyQuestion.remove(questionPicked);\r\n            return temp;\r\n        }\r\n    }\r\n    public void readQuestion2() throws IOException, ParseException {\r\n        int test;\r\n        JSONObject temp = new JSONObject();\r\n        List<String> questionNames = new ArrayList<>();\r\n        String test2;\r\n        JSONParser parser = new JSONParser();\r\n        FileReader reader = new FileReader(\"test2.json\");\r\n        Object obj = parser.parse(reader);\r\n        inputQuestionsOBJ = (JSONObject) obj;\r\n        System.out.println(inputQuestionsOBJ);\r\n        test = inputQuestionsOBJ.size();\r\n        System.out.println(test);\r\n        System.out.println(inputQuestionsOBJ.get(\"test\"));\r\n        temp = (JSONObject) inputQuestionsOBJ.get(\"test\");\r\n        System.out.println(temp.get(\"Difficulty;\"));\r\n        inputQuestionList = (JSONObject)  inputQuestionsOBJ.get(\"Question List:\");\r\n        test = inputQuestionList.size();\r\n        System.out.println(test);\r\n        for(int i = 0; i < inputQuestionList.size(); i++){\r\n            questionNames.add((String) inputQuestionList.get(String.valueOf(i+1)));\r\n        }\r\n        inputQuestionArray = (JSONObject) inputQuestionsOBJ.get(\"test\");\r\n        System.out.println(inputQuestionArray);\r\n        test2 = (String) inputQuestionArray.get(\"A1:\");\r\n        System.out.println(test2);\r\n        System.out.println(inputQuestionArray.size());\r\n        System.out.println(questionNames);\r\n        test2 = questionNames.get(1);\r\n        System.out.println(test2);\r\n    }\r\n    public static int randomNumber(int low, int high){\r\n        int random;\r\n        Random rand = new Random();\r\n        random =  rand.nextInt(high) + low;\r\n        return random;\r\n    }\r\n    public void testPlay() throws IOException, ParseException {\r\n        readQuestion();\r\n        Scanner scan = new Scanner(System.in);\r\n        int numberOfQuestions = 13;\r\n        int currentQuestion;\r\n        int lastQuestionPicked = 0;\r\n        float probEasy = 60;\r\n        float probMedium = 25;\r\n        float probHard  = 15;\r\n        String questionName;\r\n        String temp;\r\n        JSONObject questionCurrent;\r\n        JSONParser parser = new JSONParser();\r\n        FileReader reader = new FileReader(\"test2.json\");\r\n        Object obj = parser.parse(reader);\r\n        inputQuestionsOBJ = (JSONObject) obj;\r\n        for(currentQuestion = 1; currentQuestion <= numberOfQuestions; currentQuestion++) {\r\n            temp = pickQuestion(currentQuestion, numberOfQuestions, lastQuestionPicked, probEasy, probMedium, probHard);\r\n            questionName = (String) inputQuestionList.get(temp);\r\n            questionCurrent = (JSONObject) inputQuestionsOBJ.get(temp);\r\n            System.out.println(temp);\r\n            System.out.println(questionCurrent.get(\"A1:\"));\r\n            System.out.println(questionCurrent.get(\"A2:\"));\r\n            System.out.println(questionCurrent.get(\"A3:\"));\r\n            System.out.println(questionCurrent.get(\"A4:\"));\r\n            System.out.println(questionCurrent.get(\"Difficulty;\"));\r\n            temp = scan.next();\r\n        }\r\n    }\r\n    public static void main( String[] args ) throws IOException, ParseException {\r\n        Questions test = new Questions();\r\n        //test.testPlay();\r\n        test.newQuestion();\r\n        //test.readQuestion2();\r\n        //System.out.println(randomNumber(0,1));\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Questions.java b/src/Questions.java
+--- a/src/Questions.java	(revision 9406e1156e6b683abebc9caf5f6b0164355739b5)
++++ b/src/Questions.java	(date 1669884789107)
+@@ -8,11 +8,8 @@
+ import org.json.simple.parser.ParseException;
+ 
+ public class Questions {
+-    private List<Integer> easyQuestion = new ArrayList<>();
+-    private List<Integer> mediumQuestion = new ArrayList<>();
+-    private List<Integer> hardQuestion = new ArrayList<>();
+     public JSONObject questions = new JSONObject();
+-    public List<JSONObject> List = new ArrayList<>();
++    public JSONObject[] List = new JSONObject[(int) Math.pow(2,10)];
+     public JSONObject questionList = new JSONObject();
+     public JSONObject inputQuestionList = new JSONObject();
+     public JSONObject inputQuestionsOBJ = new JSONObject();
+@@ -64,10 +61,10 @@
+             questions.put("A3:", a3);
+             questions.put("A4:", a4);
+             questions.put("Correct answer: ", answer);
+-            questions.put("Difficulty:", dificultyS);
++            questions.put("Difficulty;", dificultyS);
+             testOBJ.put(question, questions);
+             questionList.put(count, question);
+-            List.add(testOBJ);
++            List[count] = testOBJ;
+             System.out.print("Another Question? ");
+             String choice = scan.next();
+ 
+@@ -77,194 +74,13 @@
+             }
+         }
+         testOBJ.put("Question List:", questionList);
+-        List.add(testOBJ);
+-        for(int i = 0; i < List.size(); i++) {
+-            file.write(List.get(i).toJSONString());
+-            file.flush();
+-        }
++        List[0] = testOBJ;
++        file.write(List[0].toJSONString());
++        file.flush();
+     }
+     public void readQuestion() throws IOException, ParseException {
+-        JSONObject tempOBJ;
+-        String temp;
+-        JSONParser parser = new JSONParser();
+-        FileReader reader = new FileReader("test2.json");
+-        Object obj = parser.parse(reader);
+-        inputQuestionsOBJ = (JSONObject) obj;
+-        inputQuestionList = (JSONObject) inputQuestionsOBJ.get("Question List:");
+-
+-        for(int count = 1; count <= inputQuestionList.size(); count++){
+-            tempOBJ = (JSONObject) inputQuestionsOBJ.get(inputQuestionList.get(String.valueOf(count)));
+-            temp = (String) tempOBJ.get("Difficulty:");
+-            switch (temp){
+-                case "Easy":
+-                    easyQuestion.add(count);
+-                    break;
+-                case "Medium":
+-                    mediumQuestion.add(count);
+-                    break;
+-                case "Hard":
+-                    hardQuestion.add(count);
+-                    break;
+-            }
+-        }
+-    }
+-    public String pickQuestion(int currentQuestion, final int numberOfQuestions, int lastQuestionPicked, float probEasy, float probMedium, float probHard){
+-        int random, questionPicked;
+-        String temp;
+-        random = randomNumber(1, 100);
+-        if(currentQuestion <= numberOfQuestions / 2){
+-            switch (lastQuestionPicked){
+-                case 0:
+-                    break;
+-                case 1:
+-                    if(probEasy >= 6){
+-                    probEasy = (probEasy - 5);
+-                    probMedium = (probMedium + 3);
+-                    probHard = (probHard + 2);
+-                    }
+-                    break;
+-                case 2:
+-                    if(probMedium >= 4) {
+-                        probEasy = (probEasy + 3);
+-                        probMedium = (probMedium - 3);
+-                    }
+-                    break;
+-                case 3:
+-                    if(probHard >= 4) {
+-                        probEasy = (probEasy + 3);
+-                        probHard = (probHard - 3);
+-                    }
+-                    break;
+-            }
+-            if(random <= probEasy){
+-                return easyQuestionLeft();
+-            } else if (random <= probMedium + probEasy){
+-                return mediumQuestionLeft();
+-            }else {
+-                return hardQuestionLeft();
+-            }
+-        }else if (currentQuestion <= numberOfQuestions - (Math.ceil(numberOfQuestions / 5))){
+-            probEasy = 12;
+-            probMedium = 66;
+-            probHard = 22;
+-            switch (lastQuestionPicked){
+-                case 1:
+-                    if(probEasy >= 6){
+-                        probEasy = (probEasy - 5);
+-                        probMedium = (probMedium + 2);
+-                        probHard = (probHard + 3);
+-                    }
+-                    break;
+-                case 2:
+-                    if(probMedium >= 4) {
+-                        probHard = (probHard + 3);
+-                        probMedium = (probMedium - 3);
+-                    }
+-                    break;
+-                case 3:
+-                    if(probHard >= 4) {
+-                        probMedium = (probMedium + 3);
+-                        probHard = (probHard - 3);
+-                    }
+-                    break;
+-            }
+-            if(random <= probMedium){
+-                return mediumQuestionLeft();
+-            } else if (random <= probMedium + probHard){
+-                return hardQuestionLeft();
+-            }else {
+-                return easyQuestionLeft();
+-            }
+-        }
+-        else if (currentQuestion == numberOfQuestions) {
+-            questionPicked = randomNumber(0, hardQuestion.size());
+-            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+-            hardQuestion.remove(questionPicked);
+-            return temp;
+-        }
+-        else{
+-            hardQuestionLeft();
+-        }
+-        return null;
+-    }
+-    public String easyQuestionLeft(){
+-        int questionPicked;
+-        String temp;
+-        if(easyQuestion.size() > 0){
+-            questionPicked = randomNumber(0, easyQuestion.size());
+-            temp = (String) inputQuestionList.get(String.valueOf(easyQuestion.get(questionPicked)));
+-            easyQuestion.remove(questionPicked);
+-            return temp;
+-        } else if (randomNumber(1,100) > 66) {
+-            if(mediumQuestion.size() > 0) {
+-                questionPicked = randomNumber(0, mediumQuestion.size());
+-                temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));
+-                mediumQuestion.remove(questionPicked);
+-                return temp;
+-            } else{
+-                questionPicked = randomNumber(0, hardQuestion.size());
+-                temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+-                hardQuestion.remove(hardQuestion.get(questionPicked));
+-                return temp;
+-            }
+-        }else{
+-            questionPicked = randomNumber(0, hardQuestion.size());
+-            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+-            hardQuestion.remove(questionPicked);
+-            return temp;
+-        }
+-    }
+-    public String mediumQuestionLeft(){
+-        int questionPicked;
+-        String temp;
+-        if(mediumQuestion.size() > 0){
+-            questionPicked = randomNumber(0, mediumQuestion.size());
+-            temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));
+-            mediumQuestion.remove(questionPicked);
+-            return temp;
+-        } else if (randomNumber(1,100) > 66) {
+-            if(easyQuestion.size() > 0) {
+-                questionPicked = randomNumber(0, easyQuestion.size());
+-                temp = (String) inputQuestionList.get(String.valueOf(easyQuestion.get(questionPicked)));
+-                easyQuestion.remove(questionPicked);
+-                return temp;
+-            } else{
+-                questionPicked = randomNumber(0, hardQuestion.size());
+-                temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+-                hardQuestion.remove(questionPicked);
+-                return temp;
+-            }
+-        }else{
+-            questionPicked = randomNumber(0, hardQuestion.size());
+-            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+-            hardQuestion.remove(questionPicked);
+-            return temp;
+-        }
+-    }
+-    public String hardQuestionLeft(){
+-        int questionPicked;
+-        String temp;
+-        if(hardQuestion.size() > 1){
+-            questionPicked = randomNumber(0, hardQuestion.size());
+-            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+-            hardQuestion.remove(questionPicked);
+-            return temp;
+-        } else if (mediumQuestion.size() > 0) {
+-            questionPicked = randomNumber(0, mediumQuestion.size());
+-            temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));
+-            mediumQuestion.remove(questionPicked);
+-            return temp;
+-        }else{
+-            questionPicked = randomNumber(0, easyQuestion.size());
+-            temp = (String) inputQuestionList.get(String.valueOf(easyQuestion.get(questionPicked)));
+-            easyQuestion.remove(questionPicked);
+-            return temp;
+-        }
+-    }
+-    public void readQuestion2() throws IOException, ParseException {
+         int test;
+-        JSONObject temp = new JSONObject();
+-        List<String> questionNames = new ArrayList<>();
++        List<String> questionNames = new ArrayList<String>();
+         String test2;
+         JSONParser parser = new JSONParser();
+         FileReader reader = new FileReader("test2.json");
+@@ -274,13 +90,12 @@
+         test = inputQuestionsOBJ.size();
+         System.out.println(test);
+         System.out.println(inputQuestionsOBJ.get("test"));
+-        temp = (JSONObject) inputQuestionsOBJ.get("test");
+-        System.out.println(temp.get("Difficulty;"));
+         inputQuestionList = (JSONObject)  inputQuestionsOBJ.get("Question List:");
+         test = inputQuestionList.size();
+         System.out.println(test);
+         for(int i = 0; i < inputQuestionList.size(); i++){
+             questionNames.add((String) inputQuestionList.get(String.valueOf(i+1)));
++
+         }
+         inputQuestionArray = (JSONObject) inputQuestionsOBJ.get("test");
+         System.out.println(inputQuestionArray);
+@@ -291,46 +106,9 @@
+         test2 = questionNames.get(1);
+         System.out.println(test2);
+     }
+-    public static int randomNumber(int low, int high){
+-        int random;
+-        Random rand = new Random();
+-        random =  rand.nextInt(high) + low;
+-        return random;
+-    }
+-    public void testPlay() throws IOException, ParseException {
+-        readQuestion();
+-        Scanner scan = new Scanner(System.in);
+-        int numberOfQuestions = 13;
+-        int currentQuestion;
+-        int lastQuestionPicked = 0;
+-        float probEasy = 60;
+-        float probMedium = 25;
+-        float probHard  = 15;
+-        String questionName;
+-        String temp;
+-        JSONObject questionCurrent;
+-        JSONParser parser = new JSONParser();
+-        FileReader reader = new FileReader("test2.json");
+-        Object obj = parser.parse(reader);
+-        inputQuestionsOBJ = (JSONObject) obj;
+-        for(currentQuestion = 1; currentQuestion <= numberOfQuestions; currentQuestion++) {
+-            temp = pickQuestion(currentQuestion, numberOfQuestions, lastQuestionPicked, probEasy, probMedium, probHard);
+-            questionName = (String) inputQuestionList.get(temp);
+-            questionCurrent = (JSONObject) inputQuestionsOBJ.get(temp);
+-            System.out.println(temp);
+-            System.out.println(questionCurrent.get("A1:"));
+-            System.out.println(questionCurrent.get("A2:"));
+-            System.out.println(questionCurrent.get("A3:"));
+-            System.out.println(questionCurrent.get("A4:"));
+-            System.out.println(questionCurrent.get("Difficulty;"));
+-            temp = scan.next();
+-        }
+-    }
+     public static void main( String[] args ) throws IOException, ParseException {
+         Questions test = new Questions();
+-        //test.testPlay();
+         test.newQuestion();
+-        //test.readQuestion2();
+-        //System.out.println(randomNumber(0,1));
++        //test.readQuestion();
+     }
+ }
+\ No newline at end of file
+Index: test2.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"1\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"2\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"3\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"4\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"Question List:\": {\r\n    \"1\": \"1\",\r\n    \"2\": \"2\",\r\n    \"3\": \"3\",\r\n    \"4\": \"4\"\r\n  }\r\n}{\r\n  \"1\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"2\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"3\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"4\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"Question List:\": {\r\n    \"1\": \"1\",\r\n    \"2\": \"2\",\r\n    \"3\": \"3\",\r\n    \"4\": \"4\"\r\n  }\r\n}{\r\n  \"1\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"2\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"3\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"4\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"Question List:\": {\r\n    \"1\": \"1\",\r\n    \"2\": \"2\",\r\n    \"3\": \"3\",\r\n    \"4\": \"4\"\r\n  }\r\n}{\r\n  \"1\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"2\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"3\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"4\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"Question List:\": {\r\n    \"1\": \"1\",\r\n    \"2\": \"2\",\r\n    \"3\": \"3\",\r\n    \"4\": \"4\"\r\n  }\r\n}{\r\n  \"1\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"2\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"3\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"4\": {\r\n    \"Difficulty:\": \"Hard\",\r\n    \"A4:\": \"4\",\r\n    \"A3:\": \"4\",\r\n    \"Correct answer: \": \"4\",\r\n    \"A2:\": \"4\",\r\n    \"A1:\": \"4\"\r\n  },\r\n  \"Question List:\": {\r\n    \"1\": \"1\",\r\n    \"2\": \"2\",\r\n    \"3\": \"3\",\r\n    \"4\": \"4\"\r\n  }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/test2.json b/test2.json
+--- a/test2.json	(revision 9406e1156e6b683abebc9caf5f6b0164355739b5)
++++ b/test2.json	(date 1669884964677)
+@@ -1,196 +1,31 @@
+ {
+   "1": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "2": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "3": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "4": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "Question List:": {
+-    "1": "1",
+-    "2": "2",
+-    "3": "3",
+-    "4": "4"
+-  }
+-}{
+-  "1": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "2": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "3": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "4": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "Question List:": {
+-    "1": "1",
+-    "2": "2",
+-    "3": "3",
+-    "4": "4"
+-  }
+-}{
+-  "1": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "2": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "3": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "4": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "Question List:": {
+-    "1": "1",
+-    "2": "2",
+-    "3": "3",
+-    "4": "4"
+-  }
+-}{
+-  "1": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
++    "A4:": "3",
++    "A3:": "3",
++    "Correct answer: ": "3",
++    "A2:": "3",
++    "A1:": "3",
++    "Difficulty;": "Hard"
+   },
+   "2": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
++    "A4:": "3",
++    "A3:": "3",
++    "Correct answer: ": "3",
++    "A2:": "3",
++    "A1:": "3",
++    "Difficulty;": "Hard"
+   },
+   "3": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "4": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
++    "A4:": "3",
++    "A3:": "3",
++    "Correct answer: ": "3",
++    "A2:": "3",
++    "A1:": "3",
++    "Difficulty;": "Hard"
+   },
+   "Question List:": {
+     "1": "1",
+     "2": "2",
+-    "3": "3",
+-    "4": "4"
+-  }
+-}{
+-  "1": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "2": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "3": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "4": {
+-    "Difficulty:": "Hard",
+-    "A4:": "4",
+-    "A3:": "4",
+-    "Correct answer: ": "4",
+-    "A2:": "4",
+-    "A1:": "4"
+-  },
+-  "Question List:": {
+-    "1": "1",
+-    "2": "2",
+-    "3": "3",
+-    "4": "4"
++    "3": "3"
+   }
+ }
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"3f815a62-ce68-4426-bcc3-5b601ad73239\" name=\"Changes\" comment=\"test1\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Questions.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Questions.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/test2.json\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/test2.json\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2I6UePIluytEdtVJsUVQzJvRL0H\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Downloaded.Files.Path.Enabled\": \"false\",\r\n    \"Repository.Attach.Annotations\": \"false\",\r\n    \"Repository.Attach.JavaDocs\": \"false\",\r\n    \"Repository.Attach.Sources\": \"false\",\r\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"WebServerToolWindowFactoryState\": \"false\",\r\n    \"jdk.selected.JAVA_MODULE\": \"corretto-16 (2)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"project.structure.last.edited\": \"Libraries\",\r\n    \"project.structure.proportion\": \"0.15\",\r\n    \"project.structure.side.proportion\": \"0.2\",\r\n    \"settings.editor.selected.configurable\": \"settings.json.schema.catalog\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"Questions\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Questions\" />\r\n      <module name=\"untitled1\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.Questions\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"3f815a62-ce68-4426-bcc3-5b601ad73239\" name=\"Changes\" comment=\"\" />\r\n      <created>1669501621120</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1669501621120</updated>\r\n      <workItem from=\"1669501622768\" duration=\"3685000\" />\r\n      <workItem from=\"1669505378996\" duration=\"167000\" />\r\n      <workItem from=\"1669505562991\" duration=\"2509000\" />\r\n      <workItem from=\"1669547217598\" duration=\"9105000\" />\r\n      <workItem from=\"1669575742424\" duration=\"12258000\" />\r\n      <workItem from=\"1669628769937\" duration=\"1998000\" />\r\n      <workItem from=\"1669647418729\" duration=\"609000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"XDebuggerManager\">\r\n    <breakpoint-manager>\r\n      <breakpoints>\r\n        <line-breakpoint enabled=\"true\" type=\"java-line\">\r\n          <url>file://$PROJECT_DIR$/src/Questions.java</url>\r\n          <line>315</line>\r\n          <option name=\"timeStamp\" value=\"24\" />\r\n        </line-breakpoint>\r\n        <line-breakpoint enabled=\"true\" type=\"java-method\">\r\n          <url>file://$PROJECT_DIR$/src/Questions.java</url>\r\n          <line>110</line>\r\n          <properties class=\"Questions\">\r\n            <option name=\"EMULATED\" value=\"true\" />\r\n            <option name=\"WATCH_EXIT\" value=\"false\" />\r\n          </properties>\r\n          <option name=\"timeStamp\" value=\"26\" />\r\n        </line-breakpoint>\r\n        <line-breakpoint enabled=\"true\" type=\"java-method\">\r\n          <url>file://$PROJECT_DIR$/src/Questions.java</url>\r\n          <line>189</line>\r\n          <properties class=\"Questions\">\r\n            <option name=\"EMULATED\" value=\"true\" />\r\n            <option name=\"WATCH_EXIT\" value=\"false\" />\r\n          </properties>\r\n          <option name=\"timeStamp\" value=\"27\" />\r\n        </line-breakpoint>\r\n      </breakpoints>\r\n    </breakpoint-manager>\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 9406e1156e6b683abebc9caf5f6b0164355739b5)
++++ b/.idea/workspace.xml	(date 1670245608011)
+@@ -4,7 +4,8 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="3f815a62-ce68-4426-bcc3-5b601ad73239" name="Changes" comment="test1">
++    <list default="true" id="3f815a62-ce68-4426-bcc3-5b601ad73239" name="Changes" comment="????">
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_29_11_2022_06_54_pm__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_29_11_2022_06_54_pm__Changes_.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Questions.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/test2.json" beforeDir="false" afterPath="$PROJECT_DIR$/test2.json" afterDir="false" />
+@@ -26,24 +27,24 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "Downloaded.Files.Path.Enabled": "false",
+-    "Repository.Attach.Annotations": "false",
+-    "Repository.Attach.JavaDocs": "false",
+-    "Repository.Attach.Sources": "false",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "WebServerToolWindowFactoryState": "false",
+-    "jdk.selected.JAVA_MODULE": "corretto-16 (2)",
+-    "nodejs_package_manager_path": "npm",
+-    "project.structure.last.edited": "Libraries",
+-    "project.structure.proportion": "0.15",
+-    "project.structure.side.proportion": "0.2",
+-    "settings.editor.selected.configurable": "settings.json.schema.catalog"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
++    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
++    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
++    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
++    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
++    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,
++    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-16 (2)&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RunManager">
+     <configuration name="Questions" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="Questions" />
+@@ -73,7 +74,19 @@
+       <workItem from="1669575742424" duration="12258000" />
+       <workItem from="1669628769937" duration="1998000" />
+       <workItem from="1669647418729" duration="609000" />
++      <workItem from="1669711519844" duration="1171000" />
++      <workItem from="1669714735792" duration="7675000" />
++      <workItem from="1669884735214" duration="1798000" />
++      <workItem from="1669994494443" duration="1631000" />
++    </task>
++    <task id="LOCAL-00001" summary="????">
++      <created>1669722295064</created>
++      <option name="number" value="00001" />
++      <option name="presentableId" value="LOCAL-00001" />
++      <option name="project" value="LOCAL" />
++      <updated>1669722295064</updated>
+     </task>
++    <option name="localTasksCounter" value="2" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -90,31 +103,21 @@
+       </map>
+     </option>
+   </component>
++  <component name="VcsManagerConfiguration">
++    <MESSAGE value="????" />
++    <option name="LAST_COMMIT_MESSAGE" value="????" />
++  </component>
+   <component name="XDebuggerManager">
+     <breakpoint-manager>
+       <breakpoints>
+-        <line-breakpoint enabled="true" type="java-line">
+-          <url>file://$PROJECT_DIR$/src/Questions.java</url>
+-          <line>315</line>
+-          <option name="timeStamp" value="24" />
+-        </line-breakpoint>
+         <line-breakpoint enabled="true" type="java-method">
+           <url>file://$PROJECT_DIR$/src/Questions.java</url>
+-          <line>110</line>
++          <line>81</line>
+           <properties class="Questions">
+             <option name="EMULATED" value="true" />
+             <option name="WATCH_EXIT" value="false" />
+           </properties>
+-          <option name="timeStamp" value="26" />
+-        </line-breakpoint>
+-        <line-breakpoint enabled="true" type="java-method">
+-          <url>file://$PROJECT_DIR$/src/Questions.java</url>
+-          <line>189</line>
+-          <properties class="Questions">
+-            <option name="EMULATED" value="true" />
+-            <option name="WATCH_EXIT" value="false" />
+-          </properties>
+-          <option name="timeStamp" value="27" />
++          <option name="timeStamp" value="13" />
+         </line-breakpoint>
+       </breakpoints>
+     </breakpoint-manager>

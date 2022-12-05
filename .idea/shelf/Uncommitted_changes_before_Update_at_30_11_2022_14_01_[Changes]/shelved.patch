@@ -1,0 +1,60 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"3f815a62-ce68-4426-bcc3-5b601ad73239\" name=\"Changes\" comment=\"????\">\r\n      <change beforePath=\"$PROJECT_DIR$/src/Questions.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Questions.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2I6UePIluytEdtVJsUVQzJvRL0H\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;,\r\n    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-16 (2)&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"Questions\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Questions\" />\r\n      <module name=\"untitled1\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.Questions\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"3f815a62-ce68-4426-bcc3-5b601ad73239\" name=\"Changes\" comment=\"\" />\r\n      <created>1669501621120</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1669501621120</updated>\r\n      <workItem from=\"1669501622768\" duration=\"3685000\" />\r\n      <workItem from=\"1669505378996\" duration=\"167000\" />\r\n      <workItem from=\"1669505562991\" duration=\"2509000\" />\r\n      <workItem from=\"1669547217598\" duration=\"9105000\" />\r\n      <workItem from=\"1669575742424\" duration=\"12258000\" />\r\n      <workItem from=\"1669628769937\" duration=\"1998000\" />\r\n      <workItem from=\"1669647418729\" duration=\"609000\" />\r\n      <workItem from=\"1669711519844\" duration=\"1171000\" />\r\n      <workItem from=\"1669714735792\" duration=\"7675000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"????\">\r\n      <created>1669722295064</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1669722295064</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"2\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"????\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"????\" />\r\n  </component>\r\n  <component name=\"XDebuggerManager\">\r\n    <breakpoint-manager>\r\n      <breakpoints>\r\n        <line-breakpoint enabled=\"true\" type=\"java-method\">\r\n          <url>file://$PROJECT_DIR$/src/Questions.java</url>\r\n          <line>113</line>\r\n          <properties class=\"Questions\" method=\"main\">\r\n            <option name=\"EMULATED\" value=\"true\" />\r\n            <option name=\"WATCH_EXIT\" value=\"false\" />\r\n          </properties>\r\n          <option name=\"timeStamp\" value=\"13\" />\r\n        </line-breakpoint>\r\n      </breakpoints>\r\n    </breakpoint-manager>\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 8ace6a2d29d70b289df069b7186b1f78086c53cf)
++++ b/.idea/workspace.xml	(date 1669813309574)
+@@ -5,7 +5,7 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="3f815a62-ce68-4426-bcc3-5b601ad73239" name="Changes" comment="????">
+-      <change beforePath="$PROJECT_DIR$/src/Questions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Questions.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -72,7 +72,7 @@
+       <workItem from="1669628769937" duration="1998000" />
+       <workItem from="1669647418729" duration="609000" />
+       <workItem from="1669711519844" duration="1171000" />
+-      <workItem from="1669714735792" duration="7675000" />
++      <workItem from="1669714735792" duration="8775000" />
+     </task>
+     <task id="LOCAL-00001" summary="????">
+       <created>1669722295064</created>
+@@ -81,7 +81,21 @@
+       <option name="project" value="LOCAL" />
+       <updated>1669722295064</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="????">
++      <created>1669722633272</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1669722633272</updated>
++    </task>
++    <task id="LOCAL-00003" summary="????">
++      <created>1669722737377</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1669722737377</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -107,7 +121,7 @@
+       <breakpoints>
+         <line-breakpoint enabled="true" type="java-method">
+           <url>file://$PROJECT_DIR$/src/Questions.java</url>
+-          <line>113</line>
++          <line>108</line>
+           <properties class="Questions" method="main">
+             <option name="EMULATED" value="true" />
+             <option name="WATCH_EXIT" value="false" />
