@@ -1,7 +1,10 @@
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.*;
 import java.util.*;
 
+import com.sun.jdi.connect.spi.TransportService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,7 +15,8 @@ public class Questions {
     private List<Integer> mediumQuestion = new ArrayList<>();
     private List<Integer> hardQuestion = new ArrayList<>();
     public JSONObject questions = new JSONObject();
-    public List<JSONObject> List = new ArrayList<>();
+    public static JSONObject[] List = new JSONObject[(int) Math.pow(2,10)];
+    public List<JSONObject> List2 = new ArrayList<>();
     public JSONObject questionList = new JSONObject();
     public JSONObject inputQuestionList = new JSONObject();
     public JSONObject inputQuestionsOBJ = new JSONObject();
@@ -65,23 +69,28 @@ public class Questions {
             questions.put("A4:", a4);
             questions.put("Correct answer: ", answer);
             questions.put("Difficulty:", dificultyS);
+
             testOBJ.put(question, questions);
             questionList.put(count, question);
-            List.add(testOBJ);
+            List[count] = testOBJ;
+            file.append(List[count].toJSONString());
             System.out.print("Another Question? ");
             String choice = scan.next();
-
             count++;
+            testOBJ.clear();
             if(Objects.equals(choice, "n")){
                 stop = true;
             }
         }
         testOBJ.put("Question List:", questionList);
-        List.add(testOBJ);
-        for(int i = 0; i < List.size(); i++) {
-            file.write(List.get(i).toJSONString());
-            file.flush();
+        List[0] = testOBJ;
+        List2.add(testOBJ);
+        file.append(List[0].toJSONString());
+        file.flush();
+        /*for (int i = 0; i < count-1; i++) {
+            file.write(List[i].toJSONString());
         }
+        file.flush();*/
     }
     public void readQuestion() throws IOException, ParseException {
         JSONObject tempOBJ;
@@ -175,8 +184,7 @@ public class Questions {
             }else {
                 return easyQuestionLeft();
             }
-        }
-        else if (currentQuestion == numberOfQuestions) {
+        } else if (currentQuestion == numberOfQuestions) {
             questionPicked = randomNumber(0, hardQuestion.size());
             temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
             hardQuestion.remove(questionPicked);
@@ -189,6 +197,7 @@ public class Questions {
     }
     public String easyQuestionLeft(){
         int questionPicked;
+        int tempQ;
         String temp;
         if(easyQuestion.size() > 0){
             questionPicked = randomNumber(0, easyQuestion.size());
@@ -198,18 +207,21 @@ public class Questions {
         } else if (randomNumber(1,100) > 66) {
             if(mediumQuestion.size() > 0) {
                 questionPicked = randomNumber(0, mediumQuestion.size());
+                tempQ = mediumQuestion.get(questionPicked);
                 temp = (String) inputQuestionList.get(mediumQuestion.get(questionPicked));
                 mediumQuestion.remove(questionPicked);
                 return temp;
             } else{
                 questionPicked = randomNumber(0, hardQuestion.size());
-                temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+                tempQ = hardQuestion.get(questionPicked);
+                temp = (String) inputQuestionList.get(tempQ);
                 hardQuestion.remove(hardQuestion.get(questionPicked));
                 return temp;
             }
         }else{
             questionPicked = randomNumber(0, hardQuestion.size());
-            temp = (String) inputQuestionList.get(hardQuestion.get(questionPicked));
+            tempQ = hardQuestion.get(questionPicked);
+            temp = (String) inputQuestionList.get(tempQ);
             hardQuestion.remove(questionPicked);
             return temp;
         }
@@ -332,5 +344,6 @@ public class Questions {
         test.newQuestion();
         //test.readQuestion2();
         //System.out.println(randomNumber(0,1));
+
     }
 }
